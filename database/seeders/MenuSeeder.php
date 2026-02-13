@@ -17,9 +17,9 @@ class MenuSeeder extends Seeder
         $menusData = [
             [
                 'id' => 1,
-                'titulo' => 'Dashboard',
-                'icone' => 'LayoutDashboard',
-                'rota' => '/dashboard',
+                'titulo' => 'Avarias',
+                'icone' => 'TriangleAlert',
+                'rota' => '/admin/avarias',
                 'ordem' => 1,
                 'menu_pai_id' => null,
             ],
@@ -27,7 +27,7 @@ class MenuSeeder extends Seeder
 
         // Inserir os dados
         foreach ($menusData as $menu) {
-           Menus::create([
+            Menus::create([
                 'id' => $menu['id'],
                 'titulo' => $menu['titulo'],
                 'icone' => $menu['icone'],
@@ -35,7 +35,7 @@ class MenuSeeder extends Seeder
                 'ordem' => $menu['ordem'],
                 'menu_pai_id' => $menu['menu_pai_id'],
                 'usuario_responsavel' => 1,
-           ]);
+            ]);
         }
     }
 }
