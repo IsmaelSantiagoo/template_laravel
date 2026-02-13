@@ -44,10 +44,9 @@ class Usuarios extends Authenticatable
     protected $fillable = [
         'nome',
         'senha',
-        'email',
-        'foto_perfil',
-        'status',
-        'tipo',
+        'cpf',
+        'role',
+        'primeiro_acesso',
     ];
 
     // --- Validation Rules ---
@@ -55,7 +54,7 @@ class Usuarios extends Authenticatable
     {
         return [
             'nome' => ['required', 'string', 'max:100'],
-            'email' => ['required', 'string', 'email', 'max:100', 'unique:usuarios,email'],
+            'cpf' => ['required', 'string', 'max:11', 'unique:usuarios,cpf'],
             'senha' => ['required', 'string'],
             'confirmar_senha' => ['required', 'same:senha'],
         ];
@@ -68,29 +67,18 @@ class Usuarios extends Authenticatable
             'senha.string' => 'A senha deve ser do tipo texto.',
             'confirmar_senha.required' => 'A confirmação de senha é obrigatória.',
             'confirmar_senha.same' => 'As senhas não coincidem.',
-            'email.required' => 'O e-mail é obrigatório.',
-            'email.string' => 'O e-mail deve ser do tipo texto.',
-            'email.email' => 'O e-mail deve ser um endereço válido.',
-            'email.max' => 'O e-mail não pode ter mais de 100 caracteres.',
-            'email.unique' => 'O e-mail informado já está em uso.',
+            'cpf.required' => 'O CPF é obrigatório.',
+            'cpf.string' => 'O CPF deve ser do tipo texto.',
+            'cpf.max' => 'O CPF não pode ter mais de 11 caracteres.',
+            'cpf.unique' => 'O CPF informado já está em uso.',
             'nome.required' => 'O nome é obrigatório.',
             'nome.string' => 'O nome deve ser do tipo texto.',
             'nome.max' => 'O nome não pode ter mais de 100 caracteres.',
-            'avatar.file' => 'O avatar deve ser um arquivo válido.',
-            'avatar.image' => 'O avatar deve ser uma imagem.',
-            'avatar.max' => 'O avatar não pode ser maior que 4MB.',
-            'status.boolean' => 'O campo status deve ser verdadeiro ou falso.',
+            'role.required' => 'O tipo de usuário é obrigatório.',
         ];
     }
 
     // --- Accessors ---
-
-    public function setFotoPerfilAttribute($value)
-    {
-        $this->attributes['foto_perfil'] = $value ?: 'https://ui-avatars.com/api/?name=' . (
-            urlencode($this->nome ?? $this->email)
-        ) . '&background=random&size=128&rounded=true&format=svg';
-    }
 
     // --- Mutators ---
 
@@ -104,14 +92,14 @@ class Usuarios extends Authenticatable
         $this->attributes['senha'] = Hash::make($value);
     }
 
-    public function setEmailAttribute($value)
+    public function setCpfAttribute($value)
     {
-        $this->attributes['email'] = mb_strtolower($value);
+        $this->attributes['cpf'] = mb_strtolower($value);
     }
 
-    public function setTipoAttribute($value)
+    public function setRoleAttribute($value)
     {
-        $this->attributes['tipo'] = mb_strtolower($value) ?: 1;
+        $this->attributes['role'] = mb_strtolower($value) ?: 1;
     }
 
     // --- JWT Methods ---
@@ -131,9 +119,9 @@ class Usuarios extends Authenticatable
         return [
             'id' => (string) $this->id,
             'nome' => $this->nome,
-            'email' => $this->email,
-            'avatar' => $this->foto_perfil,
-            'tipo' => $this->tipo ?? null,
+            'cpf' => $this->cpf,
+            'role' => $this->role ?? null,
+            'first_access' => $this->first_access,
         ];
     }
 

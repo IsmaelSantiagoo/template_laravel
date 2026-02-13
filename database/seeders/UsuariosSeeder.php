@@ -19,12 +19,11 @@ class UsuariosSeeder extends Seeder
         }
 
         Usuarios::create([
-            'nome' => 'Desenvolvedor',
-            'email' => 'dev@example.com',
-            'foto_perfil' => null,
+            'nome' => 'Ismael Santiago',
+            'cpf' => '16627182688',
             'senha' => $defaultPassword,
-            'status' => 1,
-            'tipo' => 1
+            'role' => 'monitoramento',
+            'first_access' => true
         ]);
     }
 }

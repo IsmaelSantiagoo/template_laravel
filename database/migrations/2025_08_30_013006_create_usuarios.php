@@ -14,11 +14,10 @@ return new class extends Migration
         Schema::create('usuarios', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nome');
-            $table->string('email')->unique();
+            $table->string('cpf')->unique();
             $table->string('senha');
-            $table->string('foto_perfil')->nullable();
-            $table->boolean('status');
-            $table->integer('tipo');
+            $table->enum('role', ['monitoramento', 'motorista'])->default('motorista');
+            $table->boolean('first_access')->default(true);
             $table->timestamps();
         });
     }

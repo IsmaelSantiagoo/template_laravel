@@ -8,6 +8,7 @@ use App\Notifications\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AuthController extends Controller
 {
@@ -22,9 +23,9 @@ class AuthController extends Controller
         return [
             'id' => $user->id,
             'nome' => $user->nome,
-            'email' => $user->email,
-            'avatar' => $user->foto_perfil,
-            'tipo' => $user->tipo,
+            'cpf' => $user->cpf,
+            'role' => $user->role,
+            'first_access' => $user->first_access,
         ];
     }
 
@@ -52,13 +53,13 @@ class AuthController extends Controller
     {
         // Valida os dados enviados pelo usuário
         $payload = $request->validate([
-            'email' => ['required', 'string'],
+            'cpf' => ['required', 'string'],
             'senha' => ['required', 'string'],
         ]);
 
-        // Busca o usuário pelo campo 'email'
+        // Busca o usuário pelo campo 'cpf'
         $user = Usuarios::query()
-            ->where('email', $payload['email'])
+            ->where('cpf', $payload['cpf'])
             ->first()
         ;
 
@@ -131,11 +132,10 @@ class AuthController extends Controller
 
         Usuarios::create([
             'nome' => $request->nome,
-            'email' => $request->email,
+            'cpf' => $request->cpf,
             'senha' => $request->senha,
-            'foto_perfil' => $request->avatar,
-            'status' => $request->status ?? true,
-            'tipo' => $request->tipo,
+            'role' => $request->role,
+            'primeiro_acesso' => true,
         ]);
 
         return response()->json([
