@@ -14,7 +14,16 @@ class MenuSeeder extends Seeder
     {
 
         // Menus principais
-        $menusData = [];
+        $menusData = [
+            [
+                'id' => 1,
+                'titulo' => 'Dashboard',
+                'icone' => 'LayoutDashboard',
+                'rota' => '/dashboard',
+                'ordem' => 1,
+                'menu_pai_id' => null,
+            ],
+        ];
 
         // Inserir os dados
         foreach ($menusData as $menu) {

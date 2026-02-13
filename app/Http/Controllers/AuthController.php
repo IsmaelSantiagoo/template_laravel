@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Menus;
 use App\Models\Usuarios;
 use App\Notifications\UserNotification;
 // use App\Services\GoogleAuthService;
@@ -102,12 +103,15 @@ class AuthController extends Controller
             $user->notify(new UserNotification($notification));
         }
 
+        $menus = Menus::query()->get()->toArray();
+
         return response()->json([
             'success' => true,
             'message' => 'Login realizado com sucesso.',
             'data' => [
                 'token' => $token,
                 'usuario' => $this->userDataArray($user),
+                'menus' => $menus,
             ],
         ]);
     }
@@ -155,7 +159,10 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Dados do usuário autenticado',
-                'data' => $user
+                'data' => [
+                    'usuario' => $this->userDataArray($user),
+                    'menus' => Menus::query()->get()->toArray(),
+                ]
             ]);
         } catch (\Exception $e) {
             return response()->json([

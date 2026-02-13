@@ -10,13 +10,11 @@ class MenusController extends Controller
     // Listar todos os menus
     public function read()
     {
-        $menus = Menus::whereNull('menu_pai_id')->get();
-
-        // armazena submenus em cada menu
-        foreach ($menus as $menu) {
-            $subMenus = Menus::where('menu_pai_id', $menu->id)->get();
-            $menu->submenus = $subMenus;
-        }
+        $menus = $this->buildMenuTree(
+            Menus::query()
+                ->get()
+                ->toArray()
+        );
 
         try {
             return response()->json([
@@ -87,13 +85,13 @@ class MenusController extends Controller
                 ], 404);
             }
             // dados do menu formatados
-                $menuArray = $menu->toArray();
-                $menuArray['usuario_responsavel'] = $menu->usuario_responsavel;
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Menu encontrado com sucesso.',
-                    'data' => $menuArray
-                ]);
+            $menuArray = $menu->toArray();
+            $menuArray['usuario_responsavel'] = $menu->usuario_responsavel;
+            return response()->json([
+                'success' => true,
+                'message' => 'Menu encontrado com sucesso.',
+                'data' => $menuArray
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -123,14 +121,14 @@ class MenusController extends Controller
                     'message' => 'Menu não encontrado para atualização.',
                 ], 404);
             }
-                $menu->update([
-                    'titulo' => $request->titulo,
-                    'icone' => $request->icone,
-                    'rota' => $request->rota,
-                    'ordem' => $request->ordem,
-                    'menu_pai_id' => $request->menu_pai_id,
-                    'usuario_responsavel' => $request->usuario_responsavel,
-                ]);
+            $menu->update([
+                'titulo' => $request->titulo,
+                'icone' => $request->icone,
+                'rota' => $request->rota,
+                'ordem' => $request->ordem,
+                'menu_pai_id' => $request->menu_pai_id,
+                'usuario_responsavel' => $request->usuario_responsavel,
+            ]);
             return response()->json([
                 'success' => true,
                 'message' => 'Menu atualizado com sucesso.',
@@ -167,5 +165,29 @@ class MenusController extends Controller
                 'data' => $e->getMessage()
             ], 400);
         }
+    }
+
+    private function buildMenuTree(array $menus): array
+    {
+        $menusById = [];
+        foreach ($menus as $menu) {
+            $menu['sub_menus'] = [];
+            $menusById[$menu['id']] = $menu;
+        }
+
+        $roots = [];
+        foreach ($menusById as $id => &$menu) {
+            $parentId = $menu['menu_pai_id'] ?? null;
+
+            if ($parentId !== null && isset($menusById[$parentId])) {
+                $menusById[$parentId]['sub_menus'][] = &$menu;
+                continue;
+            }
+
+            $roots[] = &$menu;
+        }
+        unset($menu);
+
+        return $roots;
     }
 }
