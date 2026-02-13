@@ -145,6 +145,28 @@ class AuthController extends Controller
     }
 
     /**
+     * Retorna os dados do usuário logado (Check Me)
+     */
+    public function me(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Dados do usuário autenticado',
+                'data' => $user
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao obter os dados do usuário autenticado',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Logout
      *
      * Invalida o token de acesso do usuário
