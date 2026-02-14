@@ -24,6 +24,14 @@ class MenuSeeder extends Seeder
                 'ordem' => 1,
                 'menu_pai_id' => null,
             ],
+            [
+                'id' => DB::raw('(UUID())'),
+                'titulo' => 'Importações',
+                'icone' => 'Upload',
+                'rota' => '/admin/importacoes',
+                'ordem' => 2,
+                'menu_pai_id' => null,
+            ],
         ];
 
         // Inserir os dados
