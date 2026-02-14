@@ -12,14 +12,14 @@ return new class() extends Migration {
     {
         Schema::create('usuarios_menus_favoritos', function (Blueprint $table) {
             $table
-                ->unsignedInteger('usuario_id')
+                ->uuid('usuario_id')
                 ->constrained('usuarios')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete()
             ;
 
             $table
-                ->unsignedInteger('menu_id')
+                ->uuid('menu_id')
                 ->constrained('menus')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete()

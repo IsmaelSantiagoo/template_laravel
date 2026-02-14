@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Menus extends Model
+class Cluster extends Model
 {
-    protected $table = 'menus';
+    protected $table = 'clusters';
 
-    // protected $primaryKey = 'id'; // padrão do Eloquent
     public $timestamps = true;
 
     public $incrementing = true;
@@ -16,21 +15,13 @@ class Menus extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
-        'titulo',
-        'icone',
-        'rota',
-        'ordem',
-        'menu_pai_id',
+        'codigo',
+        'descricao',
         'usuario_responsavel_id',
     ];
 
     public function usuario()
     {
         return $this->belongsTo('App\\Models\\Usuarios', 'usuario_responsavel_id');
-    }
-
-    public function menu_pai()
-    {
-        return $this->belongsTo(Menus::class, 'menu_pai_id');
     }
 }

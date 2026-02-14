@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Menus;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class MenuSeeder extends Seeder
 {
@@ -16,7 +17,7 @@ class MenuSeeder extends Seeder
         // Menus principais
         $menusData = [
             [
-                'id' => 1,
+                'id' => DB::raw('(UUID())'),
                 'titulo' => 'Avarias',
                 'icone' => 'TriangleAlert',
                 'rota' => '/admin/avarias',
@@ -34,7 +35,7 @@ class MenuSeeder extends Seeder
                 'rota' => $menu['rota'],
                 'ordem' => $menu['ordem'],
                 'menu_pai_id' => $menu['menu_pai_id'],
-                'usuario_responsavel' => 1,
+                'usuario_responsavel_id' => 1,
             ]);
         }
     }

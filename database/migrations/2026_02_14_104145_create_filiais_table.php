@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('menus', function (Blueprint $table) {
+        Schema::create('filiais', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('titulo')->unique();
-            $table->string('icone')->nullable();
-            $table->string('rota')->nullable();
-            $table->integer('ordem')->default(0);
-            $table->uuid('menu_pai_id')->nullable();
-            $table->uuid('usuario_responsavel_id')->nullable();
+            $table->string('codigo')->unique();
+            $table->string('descricao');
+            $table->foreignUuid('usuario_responsavel_id')->constrained('usuarios')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('menus');
+        Schema::dropIfExists('filiais');
     }
 };

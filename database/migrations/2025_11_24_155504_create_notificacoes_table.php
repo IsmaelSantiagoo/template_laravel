@@ -21,7 +21,7 @@ return new class() extends Migration {
             $table->dateTimeTz('data_leitura')->nullable();
 
             $table
-                ->unsignedInteger('usuario_id')
+                ->uuid('usuario_id')
                 ->foreignId('usuario_id')
                 ->constrained('usuarios')
                 ->cascadeOnUpdate()
@@ -29,7 +29,7 @@ return new class() extends Migration {
             ;
 
             $table
-                ->unsignedInteger('menu_id')
+                ->uuid('menu_id')
                 ->foreignId('menu_id')
                 ->nullable()
                 ->constrained('menus')
