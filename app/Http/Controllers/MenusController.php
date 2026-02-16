@@ -10,11 +10,7 @@ class MenusController extends Controller
     // Listar todos os menus
     public function read()
     {
-        $menus = $this->buildMenuTree(
-            Menus::query()
-                ->get()
-                ->toArray()
-        );
+        $menus = Menus::buildMenuTree(Menus::query()->get()->toArray());
 
         try {
             return response()->json([
@@ -165,29 +161,5 @@ class MenusController extends Controller
                 'data' => $e->getMessage()
             ], 400);
         }
-    }
-
-    private function buildMenuTree(array $menus): array
-    {
-        $menusById = [];
-        foreach ($menus as $menu) {
-            $menu['sub_menus'] = [];
-            $menusById[$menu['id']] = $menu;
-        }
-
-        $roots = [];
-        foreach ($menusById as $id => &$menu) {
-            $parentId = $menu['menu_pai_id'] ?? null;
-
-            if ($parentId !== null && isset($menusById[$parentId])) {
-                $menusById[$parentId]['sub_menus'][] = &$menu;
-                continue;
-            }
-
-            $roots[] = &$menu;
-        }
-        unset($menu);
-
-        return $roots;
     }
 }

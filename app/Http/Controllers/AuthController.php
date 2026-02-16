@@ -61,8 +61,7 @@ class AuthController extends Controller
         // Busca o usuário pelo campo 'cpf'
         $user = Usuarios::query()
             ->where('cpf', $payload['cpf'])
-            ->first()
-        ;
+            ->first();
 
         // Verifica se o usuário existe e está ativo
         if (!$user) {
@@ -103,7 +102,7 @@ class AuthController extends Controller
             $user->notify(new UserNotification($notification));
         }
 
-        $menus = Menus::query()->get()->toArray();
+        $menus = Menus::buildMenuTree(Menus::query()->get()->toArray());
 
         return response()->json([
             'success' => true,
@@ -155,13 +154,14 @@ class AuthController extends Controller
     {
         try {
             $user = $request->user();
+            $menus = Menus::buildMenuTree(Menus::query()->get()->toArray());
 
             return response()->json([
                 'success' => true,
                 'message' => 'Dados do usuário autenticado',
                 'data' => [
                     'usuario' => $this->userDataArray($user),
-                    'menus' => Menus::query()->get()->toArray(),
+                    'menus' => $menus,
                 ]
             ]);
         } catch (\Exception $e) {
