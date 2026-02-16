@@ -44,7 +44,7 @@ class MenuSeeder extends Seeder
         Menus::create([
             'titulo' => 'Usuários',
             'icone' => 'Users',
-            'rota' => '/admin/usuarios',
+            'rota' => '/admin/gerenciar/usuarios',
             'ordem' => 1,
             'menu_pai_id' => $gerenciar->id,
             'usuario_responsavel_id' => 1,
@@ -53,7 +53,7 @@ class MenuSeeder extends Seeder
         Menus::create([
             'titulo' => 'Motoristas',
             'icone' => 'Truck',
-            'rota' => '/admin/motoristas',
+            'rota' => '/admin/gerenciar/motoristas',
             'ordem' => 2,
             'menu_pai_id' => $gerenciar->id,
             'usuario_responsavel_id' => 1,
@@ -62,7 +62,7 @@ class MenuSeeder extends Seeder
         Menus::create([
             'titulo' => 'Mapas',
             'icone' => 'Map',
-            'rota' => '/admin/mapas',
+            'rota' => '/admin/gerenciar/mapas',
             'ordem' => 3,
             'menu_pai_id' => $gerenciar->id,
             'usuario_responsavel_id' => 1,
