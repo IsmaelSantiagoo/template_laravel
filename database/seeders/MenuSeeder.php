@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Menus;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class MenuSeeder extends Seeder
 {
@@ -13,38 +12,60 @@ class MenuSeeder extends Seeder
      */
     public function run(): void
     {
+        // Step 1: Insert parent menus
+        $avarias = Menus::create([
+            'titulo' => 'Avarias',
+            'icone' => 'TriangleAlert',
+            'rota' => '/admin/avarias',
+            'ordem' => 1,
+            'menu_pai_id' => null,
+            'usuario_responsavel_id' => 1,
+        ]);
 
-        // Menus principais
-        $menusData = [
-            [
-                'id' => DB::raw('(UUID())'),
-                'titulo' => 'Avarias',
-                'icone' => 'TriangleAlert',
-                'rota' => '/admin/avarias',
-                'ordem' => 1,
-                'menu_pai_id' => null,
-            ],
-            [
-                'id' => DB::raw('(UUID())'),
-                'titulo' => 'Importações',
-                'icone' => 'Upload',
-                'rota' => '/admin/importacoes',
-                'ordem' => 2,
-                'menu_pai_id' => null,
-            ],
-        ];
+        $importacoes = Menus::create([
+            'titulo' => 'Importações',
+            'icone' => 'Upload',
+            'rota' => '/admin/importacoes',
+            'ordem' => 2,
+            'menu_pai_id' => null,
+            'usuario_responsavel_id' => 1,
+        ]);
 
-        // Inserir os dados
-        foreach ($menusData as $menu) {
-            Menus::create([
-                'id' => $menu['id'],
-                'titulo' => $menu['titulo'],
-                'icone' => $menu['icone'],
-                'rota' => $menu['rota'],
-                'ordem' => $menu['ordem'],
-                'menu_pai_id' => $menu['menu_pai_id'],
-                'usuario_responsavel_id' => 1,
-            ]);
-        }
+        $gerenciar = Menus::create([
+            'titulo' => 'Gerenciar',
+            'icone' => 'MonitorCog',
+            'rota' => '/admin/gerenciar',
+            'ordem' => 3,
+            'menu_pai_id' => null,
+            'usuario_responsavel_id' => 1,
+        ]);
+
+        // Step 2: Insert child menus using parent IDs
+        Menus::create([
+            'titulo' => 'Usuários',
+            'icone' => 'Users',
+            'rota' => '/admin/usuarios',
+            'ordem' => 1,
+            'menu_pai_id' => $gerenciar->id,
+            'usuario_responsavel_id' => 1,
+        ]);
+
+        Menus::create([
+            'titulo' => 'Motoristas',
+            'icone' => 'Truck',
+            'rota' => '/admin/motoristas',
+            'ordem' => 2,
+            'menu_pai_id' => $gerenciar->id,
+            'usuario_responsavel_id' => 1,
+        ]);
+
+        Menus::create([
+            'titulo' => 'Mapas',
+            'icone' => 'Map',
+            'rota' => '/admin/mapas',
+            'ordem' => 3,
+            'menu_pai_id' => $gerenciar->id,
+            'usuario_responsavel_id' => 1,
+        ]);
     }
 }

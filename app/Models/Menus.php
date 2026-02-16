@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class Menus extends Model
 {
+    use HasUuids;
+
     protected $table = 'menus';
 
-    // protected $primaryKey = 'id'; // padrão do Eloquent
-    public $timestamps = true;
+    public $incrementing = false;
 
-    public $incrementing = true;
-
-    protected $keyType = 'int';
+    protected $keyType = 'string';
 
     protected $fillable = [
         'titulo',
