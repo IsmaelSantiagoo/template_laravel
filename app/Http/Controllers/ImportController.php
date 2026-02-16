@@ -58,6 +58,9 @@ class ImportController extends Controller
         ProcessImportJob::dispatch($batch->id, $path, $batch->type, $user->id)
             ->onQueue('imports');
 
+        // Refresh so the response reflects any changes made by a sync queue driver
+        $batch->refresh();
+
         return response()->json([
             'success' => true,
             'data' => $batch,
@@ -73,13 +76,41 @@ class ImportController extends Controller
 
         $imports = ImportBatch::query()
             ->where('user_id', $user->id)
-            ->whereIn('status', ['pending', 'processing', 'failed'])
-            ->orderByDesc('id')
+            ->where(function ($query) {
+                $query->whereIn('status', ['pending', 'processing', 'failed'])
+                    ->orWhere(function ($q) {
+                        $q->where('status', 'completed')
+                            ->where('updated_at', '>=', now()->subMinutes(5));
+                    });
+            })
+            ->orderByDesc('created_at')
             ->get();
 
         return response()->json([
             'success' => true,
             'data' => $imports,
+        ]);
+    }
+
+    public function show(Request $request, string $id)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        $batch = ImportBatch::query()
+            ->where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$batch) {
+            return response()->json(['message' => 'Not found.'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $batch,
         ]);
     }
 }

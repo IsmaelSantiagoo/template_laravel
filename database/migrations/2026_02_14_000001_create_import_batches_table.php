@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('import_batches', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignId('user_id')->constrained('usuarios')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained('usuarios')->cascadeOnDelete();
             $table->string('type');
             $table->string('status');
             $table->unsignedInteger('total_rows')->default(0);

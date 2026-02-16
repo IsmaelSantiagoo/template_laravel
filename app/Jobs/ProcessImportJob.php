@@ -21,9 +21,9 @@ class ProcessImportJob implements ShouldQueue
     private string $batchId;
     private string $path;
     private string $type;
-    private int $userId;
+    private string $userId;
 
-    public function __construct(string $batchId, string $path, string $type, int $userId)
+    public function __construct(string $batchId, string $path, string $type, string $userId)
     {
         $this->batchId = $batchId;
         $this->path = $path;
@@ -52,6 +52,17 @@ class ProcessImportJob implements ShouldQueue
             Excel::import($countImport, $fullPath);
 
             $totalRows = $countImport->getRowCount();
+            if ($totalRows === 0) {
+                $batch->update([
+                    'status' => 'failed',
+                    'processed_rows' => 0,
+                    'percentage' => 0,
+                    'current_step' => 'empty',
+                    'last_log' => 'No rows detected. Check headers and delimiter.',
+                ]);
+                event(new ImportProgressUpdated($batch->fresh()));
+                return;
+            }
             $batch->update([
                 'total_rows' => $totalRows,
                 'processed_rows' => 0,
@@ -64,13 +75,28 @@ class ProcessImportJob implements ShouldQueue
             $import = new GenericImport($this->batchId, $this->userId, $this->type, $totalRows, 10);
             Excel::import($import, $fullPath);
 
-            $batch->update([
-                'status' => 'completed',
-                'processed_rows' => $totalRows,
-                'percentage' => 100,
-                'current_step' => 'done',
-                'last_log' => 'Import completed',
-            ]);
+            $errorCount = $import->getErrorCount();
+            $successCount = $totalRows - $errorCount;
+
+            if ($errorCount === $totalRows) {
+                $batch->update([
+                    'status' => 'failed',
+                    'processed_rows' => $totalRows,
+                    'percentage' => 100,
+                    'current_step' => 'failed',
+                    'last_log' => "All {$totalRows} rows failed. Check logs for details.",
+                ]);
+            } else {
+                $batch->update([
+                    'status' => 'completed',
+                    'processed_rows' => $totalRows,
+                    'percentage' => 100,
+                    'current_step' => 'done',
+                    'last_log' => $errorCount > 0
+                        ? "Completed: {$successCount} imported, {$errorCount} errors"
+                        : "Import completed — {$successCount} rows imported",
+                ]);
+            }
             event(new ImportProgressUpdated($batch->fresh()));
         } catch (\Throwable $exception) {
             $batch->update([

@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class TipoMarca extends Model
 {
-    protected $table = 'tipo_marca';
+    use HasUuids;
+
+    protected $table = 'tipos_marca';
 
     public $timestamps = true;
 
-    public $incrementing = true;
+    public $incrementing = false;
 
-    protected $keyType = 'int';
+    protected $keyType = 'string';
 
     protected $fillable = [
         'codigo',
