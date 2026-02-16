@@ -34,7 +34,7 @@ class MenuSeeder extends Seeder
         $gerenciar = Menus::create([
             'titulo' => 'Gerenciar',
             'icone' => 'MonitorCog',
-            'rota' => '/admin/gerenciar',
+            'rota' => '#',
             'ordem' => 3,
             'menu_pai_id' => null,
             'usuario_responsavel_id' => 1,
