@@ -16,6 +16,11 @@ class ImportController extends Controller
         'embalagens',
         'clusters',
         'categorias',
+        'clientes',
+        'produtos',
+        'motoristas',
+        'notas_fiscais',
+        'produtos_nf',
     ];
 
     public function start(Request $request)
