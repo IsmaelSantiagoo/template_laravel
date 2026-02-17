@@ -8,6 +8,7 @@ use App\Notifications\UserNotification;
 // use App\Services\GoogleAuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -85,7 +86,7 @@ class AuthController extends Controller
         $token = $this->generateToken($user, $tokenName);
 
         // gerar uuid para a notificação
-        $notificationId = 'welcome-notify';
+        $notificationId = (string) Str::uuid();
 
         // notificação
         $notification = [
@@ -97,7 +98,11 @@ class AuthController extends Controller
         ];
 
         // notificação de boas vindas, só aparece se a notificação ainda não foi enviada
-        if (!$user->notificacoes()->where('id', $notificationId)->exists()) {
+        if (!$user->notificacoes()
+            ->where('titulo', $notification['titulo'])
+            ->where('mensagem', $notification['mensagem'])
+            ->where('tipo', $notification['tipo'])
+            ->exists()) {
             // enviar notificação
             $user->notify(new UserNotification($notification));
         }
