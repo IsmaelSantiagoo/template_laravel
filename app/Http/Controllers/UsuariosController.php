@@ -12,6 +12,25 @@ use Illuminate\Validation\Rules\Password as RulesPassword;
 class UsuariosController extends Controller
 {
 
+    // Listar todos os usuarios
+    public function index()
+    {
+        $usuarios = Usuario::buildMenuTree(Menus::query()->get()->toArray());
+
+        try {
+            return response()->json([
+                'success' => true,
+                'message' => 'Consulta de menus realizada com sucesso.',
+                'data' => $menus
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao consultar menus.'
+            ], 500);
+        }
+    }
+
     // função para alterar a senha do usuário
     public function alterarSenha(Request $request, $id)
     {
@@ -75,7 +94,6 @@ class UsuariosController extends Controller
                 'success' => true,
                 'message' => 'Senha alterada com sucesso.'
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -105,8 +123,7 @@ class UsuariosController extends Controller
             ->menus_favoritos()
             ->with('menu_pai')
             ->get()
-            ->setHidden(['pivot'])
-        ;
+            ->setHidden(['pivot']);
 
         return response()->json([
             'success' => true,
@@ -126,8 +143,7 @@ class UsuariosController extends Controller
 
             $result = $user
                 ->menus_favoritos()
-                ->toggle($menu->id)
-            ;
+                ->toggle($menu->id);
 
             $menu->load('menu_pai');
 
@@ -143,8 +159,7 @@ class UsuariosController extends Controller
                     'menu' => $menu,
                 ],
             ]);
-        }
-        catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
                 'message' => 'Erro ao favoritar/desfavoritar o menu.',

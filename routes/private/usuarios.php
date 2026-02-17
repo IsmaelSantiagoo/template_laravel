@@ -7,3 +7,5 @@ Route::patch('alterar-senha/{id}', [UsuariosController::class, 'alterarSenha']);
 
 Route::get('/menus-favoritos', [UsuariosController::class, 'getMenusFavoritos']);
 Route::post('/favoritar-menu/{menu}', [UsuariosController::class, 'favoritarMenu']);
+
+Route::get('', [UsuariosController::class, 'index'])

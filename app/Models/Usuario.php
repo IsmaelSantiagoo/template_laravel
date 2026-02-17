@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
- * Class Usuarios
+ * Class Usuario
  *
  * @property string $id
  * @property string $nome
@@ -24,7 +24,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property bool $status
  * @property string|null $tipo
  */
-class Usuarios extends Authenticatable
+class Usuario extends Authenticatable
 {
     use CanResetPassword, HasApiTokens, Notifiable, HasUuids;
 
@@ -132,11 +132,11 @@ class Usuarios extends Authenticatable
 
     public function notificacoes()
     {
-        return $this->hasMany(Notificacoes::class, 'usuario_id');
+        return $this->hasMany(Notificacao::class, 'usuario_id');
     }
 
     public function menus_favoritos()
     {
-        return $this->belongsToMany(Menus::class, 'usuarios_menus_favoritos', 'usuario_id', 'menu_id');
+        return $this->belongsToMany(Menu::class, 'usuarios_menus_favoritos', 'usuario_id', 'menu_id');
     }
 }

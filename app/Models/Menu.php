@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-class Menus extends Model
+class Menu extends Model
 {
     use HasUuids;
 
@@ -26,12 +26,12 @@ class Menus extends Model
 
     public function usuario()
     {
-        return $this->belongsTo('App\\Models\\Usuarios', 'usuario_responsavel_id');
+        return $this->belongsTo(Usuario::class, 'usuario_responsavel_id');
     }
 
     public function menu_pai()
     {
-        return $this->belongsTo(Menus::class, 'menu_pai_id');
+        return $this->belongsTo(Menu::class, 'menu_pai_id');
     }
 
     /**

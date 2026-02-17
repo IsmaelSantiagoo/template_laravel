@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Notificacoes extends Model
+class Notificacao extends Model
 {
     public $timestamps = false;
     public $incrementing = false;
@@ -30,11 +30,11 @@ class Notificacoes extends Model
 
     public function usuario()
     {
-        return $this->belongsTo(Usuarios::class, 'usuario_id');
+        return $this->belongsTo(Usuario::class, 'usuario_id');
     }
 
     public function menu()
     {
-        return $this->belongsTo(Menus::class, 'menu_id');
+        return $this->belongsTo(Menu::class, 'menu_id');
     }
 }
