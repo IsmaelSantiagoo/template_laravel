@@ -97,6 +97,35 @@ class UsuariosController extends Controller
         }
     }
 
+    // Exibir um usuário específico
+    public function show($cpf)
+    {
+        $usuario = Usuario::where('cpf', $cpf)->first();
+
+        try {
+            if (!$usuario) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuário não encontrado.',
+                ], 404);
+            }
+            // dados do usuário formatados
+            $usuarioArray = $usuario->toArray();
+            $usuarioArray['usuario_responsavel'] = $usuario->usuario_responsavel;
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuário encontrado com sucesso.',
+                'data' => $usuarioArray
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao consultar usuário.',
+                'data' => $e->getMessage()
+            ], 500);
+        }
+    }
+
     // função para alterar a senha do usuário
     public function alterarSenha(Request $request, $id)
     {
