@@ -15,7 +15,7 @@ class UsuariosController extends Controller
     // Listar todos os usuarios
     public function index()
     {
-        $usuarios = Usuario::buildMenuTree(Menu::query()->get()->toArray());
+        $usuarios = Usuario::query()->get();
 
         try {
             return response()->json([
