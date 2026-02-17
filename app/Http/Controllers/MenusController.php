@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menus;
+use App\Models\Menu;
 use Illuminate\Http\Request;
 
 class MenusController extends Controller
@@ -10,7 +10,7 @@ class MenusController extends Controller
     // Listar todos os menus
     public function read()
     {
-        $menus = Menus::buildMenuTree(Menus::query()->get()->toArray());
+        $menus = Menu::buildMenuTree(Menu::query()->get()->toArray());
 
         try {
             return response()->json([
@@ -41,14 +41,14 @@ class MenusController extends Controller
         // validação de cadastro completo
         try {
             // Verifica se já existe menu com o mesmo título
-            $existe = Menus::where('titulo', $request->titulo)->first();
+            $existe = Menu::where('titulo', $request->titulo)->first();
             if ($existe) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Menu já cadastrado.'
                 ], 400);
             }
-            Menus::create([
+            Menu::create([
                 'titulo' => $request->titulo,
                 'icone' => $request->icone,
                 'rota' => $request->rota,
@@ -71,7 +71,7 @@ class MenusController extends Controller
     // Exibir um menu específico
     public function show($id)
     {
-        $menu = Menus::find($id);
+        $menu = Menu::find($id);
 
         try {
             if (!$menu) {
@@ -109,7 +109,7 @@ class MenusController extends Controller
             'usuario_responsavel' => 'required|integer|exists:usuarios,id',
         ]);
 
-        $menu = Menus::find($id);
+        $menu = Menu::find($id);
         try {
             if (!$menu) {
                 return response()->json([
@@ -141,7 +141,7 @@ class MenusController extends Controller
     // Deletar um menu
     public function delete($id)
     {
-        $menu = Menus::find($id);
+        $menu = Menu::find($id);
         try {
             if (!$menu) {
                 return response()->json([

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Menus;
+use App\Models\Menu;
 use Illuminate\Database\Seeder;
 
 class MenuSeeder extends Seeder
@@ -13,7 +13,7 @@ class MenuSeeder extends Seeder
     public function run(): void
     {
         // Step 1: Insert parent menus
-        $avarias = Menus::create([
+        $avarias = Menu::create([
             'titulo' => 'Avarias',
             'icone' => 'TriangleAlert',
             'rota' => '/admin/avarias',
@@ -22,7 +22,7 @@ class MenuSeeder extends Seeder
             'usuario_responsavel_id' => 1,
         ]);
 
-        $importacoes = Menus::create([
+        $importacoes = Menu::create([
             'titulo' => 'Importações',
             'icone' => 'Upload',
             'rota' => '/admin/importacoes',
@@ -31,7 +31,7 @@ class MenuSeeder extends Seeder
             'usuario_responsavel_id' => 1,
         ]);
 
-        $gerenciar = Menus::create([
+        $gerenciar = Menu::create([
             'titulo' => 'Gerenciar',
             'icone' => 'MonitorCog',
             'rota' => '#',
@@ -40,8 +40,8 @@ class MenuSeeder extends Seeder
             'usuario_responsavel_id' => 1,
         ]);
 
-        // Step 2: Insert child menus using parent IDs
-        Menus::create([
+        // Step 2: Insert child menu using parent IDs
+        Menu::create([
             'titulo' => 'Usuários',
             'icone' => 'Users',
             'rota' => '/admin/gerenciar/usuarios',
@@ -50,7 +50,7 @@ class MenuSeeder extends Seeder
             'usuario_responsavel_id' => 1,
         ]);
 
-        Menus::create([
+        Menu::create([
             'titulo' => 'Motoristas',
             'icone' => 'Truck',
             'rota' => '/admin/gerenciar/motoristas',
@@ -59,7 +59,7 @@ class MenuSeeder extends Seeder
             'usuario_responsavel_id' => 1,
         ]);
 
-        Menus::create([
+        Menu::create([
             'titulo' => 'Mapas',
             'icone' => 'Map',
             'rota' => '/admin/gerenciar/mapas',

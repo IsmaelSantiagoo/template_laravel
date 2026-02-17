@@ -3,7 +3,7 @@
 namespace App\Broadcasting;
 
 use App\Contracts\DatabaseNotifiable;
-use App\Models\Notificacoes;
+use App\Models\Notificacao;
 
 class DatabaseChannel
 {
@@ -24,7 +24,7 @@ class DatabaseChannel
             throw new \Exception('Notificação sem ID (UUID). Certifique-se de passar o campo "id" ao criar a notificação.');
         }
 
-        Notificacoes::create([
+        Notificacao::create([
             'id' => $data['id'],
             'titulo' => $data['titulo'] ?? null,
             'mensagem' => $data['mensagem'] ?? null,

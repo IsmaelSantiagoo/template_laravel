@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menus;
-use App\Models\Usuarios;
+use App\Models\Menu;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -15,18 +15,18 @@ class UsuariosController extends Controller
     // Listar todos os usuarios
     public function index()
     {
-        $usuarios = Usuario::buildMenuTree(Menus::query()->get()->toArray());
+        $usuarios = Usuario::buildMenuTree(Menu::query()->get()->toArray());
 
         try {
             return response()->json([
                 'success' => true,
-                'message' => 'Consulta de menus realizada com sucesso.',
-                'data' => $menus
+                'message' => 'Consulta de usuários realizada com sucesso.',
+                'data' => $usuarios
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Erro ao consultar menus.'
+                'message' => 'Erro ao consultar usuários.'
             ], 500);
         }
     }
@@ -64,7 +64,7 @@ class UsuariosController extends Controller
         // lógica para alterar a senha do usuário com o ID fornecido
         try {
             // encontrar usuário pelo ID
-            $usuario = Usuarios::find($id);
+            $usuario = Usuario::find($id);
 
             if (!$usuario) {
                 return response()->json([
@@ -116,7 +116,7 @@ class UsuariosController extends Controller
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        /** @var Usuarios $user Usuário autenticado */
+        /** @var Usuario $user Usuário autenticado */
         $user = $request->user();
 
         $favoritos = $user
@@ -135,10 +135,10 @@ class UsuariosController extends Controller
      * Recebe o ID do menu e alterna seu status de favorito para o usuário autenticado.
      * Se o menu já estiver favoritado, ele será desfavoritado, e vice-versa.
      */
-    public function favoritarMenu(Request $request, Menus $menu)
+    public function favoritarMenu(Request $request, Menu $menu)
     {
         try {
-            /** @var Usuarios $user Usuário autenticado */
+            /** @var Usuario $user Usuário autenticado */
             $user = $request->user();
 
             $result = $user

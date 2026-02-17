@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Notificacoes;
-use App\Models\Usuarios;
+use App\Models\Notificacao;
+use App\Models\Usuario;
 use App\Notifications\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -31,7 +31,7 @@ class NotificacoesController extends Controller
             ]);
 
             $usuariosIds = $request->input('usuarios', []);
-            $query = Usuarios::query();
+            $query = Usuario::query();
 
             if (empty($usuariosIds)) {
                 $usuarios = $query->get();
@@ -90,12 +90,12 @@ class NotificacoesController extends Controller
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        $notificacoes = Notificacoes::query()
+        $notificacoes = Notificacao::query()
             ->with('menu')
             ->where('usuario_id', $user->id)
             ->orderBy('data_envio', 'asc')
             ->get()
-            ->map(function ($notificacao) {
+            ->map(function (Notificacao $notificacao) {
                 return [
                     'id' => $notificacao->id,
                     'titulo' => $notificacao->titulo,
@@ -128,7 +128,7 @@ class NotificacoesController extends Controller
                 'id.*' => ['required', 'string', 'exists:notificacoes,id'],
             ]);
 
-            $notificacoes = Notificacoes::query()
+            $notificacoes = Notificacao::query()
                 ->whereIn('id', $request->input('id'))
                 ->get()
             ;

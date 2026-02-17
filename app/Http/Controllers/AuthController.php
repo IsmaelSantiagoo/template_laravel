@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menus;
-use App\Models\Usuarios;
+use App\Models\Menu;
+use App\Models\Usuario;
 use App\Notifications\UserNotification;
 // use App\Services\GoogleAuthService;
 use Illuminate\Http\Request;
@@ -16,10 +16,10 @@ class AuthController extends Controller
     /**
      * Monta array de dados do usuário para retorno na autenticação.
      *
-     * @param  Usuarios  $user  Usuário autenticado
+     * @param  Usuario  $user  Usuário autenticado
      * @return array Dados do usuário
      */
-    private function userDataArray($user): array
+    private function userDataArray(Usuario $user): array
     {
         return [
             'id' => $user->id,
@@ -33,11 +33,11 @@ class AuthController extends Controller
     /**
      * Gera e retorna um token único para o usuário, removendo tokens antigos.
      *
-     * @param  Usuarios  $user  Usuário para o qual gerar o token
+     * @param  Usuario  $user  Usuário para o qual gerar o token
      * @param  string  $tokenName  Nome do token (padrão: 'web_auth')
      * @return string Token gerado
      */
-    private function generateToken($user, $tokenName = 'web_auth'): string
+    private function generateToken(Usuario $user, $tokenName = 'web_auth'): string
     {
         $user->tokens()->where('name', $tokenName)->delete();
 
@@ -59,7 +59,7 @@ class AuthController extends Controller
         ]);
 
         // Busca o usuário pelo campo 'cpf'
-        $user = Usuarios::query()
+        $user = Usuario::query()
             ->where('cpf', $payload['cpf'])
             ->first();
 
@@ -102,7 +102,7 @@ class AuthController extends Controller
             $user->notify(new UserNotification($notification));
         }
 
-        $menus = Menus::buildMenuTree(Menus::query()->get()->toArray());
+        $menus = Menu::buildMenuTree(Menu::query()->get()->toArray());
 
         return response()->json([
             'success' => true,
@@ -123,7 +123,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         // Valida os dados relativos ao usuário na requisição
-        $validator = Validator::make($request->all(), Usuarios::createRules(), Usuarios::messages());
+        $validator = Validator::make($request->all(), Usuario::createRules(), Usuario::messages());
 
         if ($validator->fails()) {
             return response()->json([
@@ -133,7 +133,7 @@ class AuthController extends Controller
             ], 422);
         }
 
-        Usuarios::create([
+        Usuario::create([
             'nome' => $request->nome,
             'cpf' => $request->cpf,
             'senha' => $request->senha,
@@ -154,7 +154,7 @@ class AuthController extends Controller
     {
         try {
             $user = $request->user();
-            $menus = Menus::buildMenuTree(Menus::query()->get()->toArray());
+            $menus = Menu::buildMenuTree(Menu::query()->get()->toArray());
 
             return response()->json([
                 'success' => true,

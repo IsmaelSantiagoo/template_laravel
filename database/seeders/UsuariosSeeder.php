@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Usuarios;
+use App\Models\Usuario;
 use Illuminate\Database\Seeder;
 
 class UsuariosSeeder extends Seeder
@@ -18,7 +18,7 @@ class UsuariosSeeder extends Seeder
             return;
         }
 
-        Usuarios::create([
+        Usuario::create([
             'nome' => 'Ismael Santiago',
             'cpf' => '16627182688',
             'senha' => $defaultPassword,
