@@ -13,9 +13,25 @@ class UsuariosController extends Controller
 {
 
     // Listar todos os usuarios
-    public function index()
+    public function index(Request $request)
     {
-        $usuarios = Usuario::query()->get();
+
+        // consultar dados dos usuários e filtrar por nome, cpf ou role se os parâmetros forem fornecidos
+        $query = Usuario::query();
+
+        if ($request->has('nome')) {
+            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+        }
+
+        if ($request->has('cpf')) {
+            $query->where('cpf', 'like', '%' . $request->input('cpf') . '%');
+        }
+
+        if ($request->has('role')) {
+            $query->where('role', $request->input('role'));
+        }
+
+        $usuarios = $query->get();
 
         try {
             return response()->json([
