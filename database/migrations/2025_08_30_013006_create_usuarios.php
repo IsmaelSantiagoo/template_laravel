@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('cpf')->unique();
             $table->string('senha');
             $table->enum('role', ['monitoramento', 'motorista'])->default('motorista');
-            $table->boolean('first_access')->default(true);
+            $table->boolean('primeiro_acesso')->default(true);
             $table->timestamps();
         });
     }

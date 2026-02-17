@@ -26,7 +26,7 @@ class AuthController extends Controller
             'nome' => $user->nome,
             'cpf' => $user->cpf,
             'role' => $user->role,
-            'first_access' => $user->first_access,
+            'primeiro_acesso' => $user->primeiro_acesso,
         ];
     }
 

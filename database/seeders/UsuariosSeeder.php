@@ -23,7 +23,7 @@ class UsuariosSeeder extends Seeder
             'cpf' => '16627182688',
             'senha' => $defaultPassword,
             'role' => 'monitoramento',
-            'first_access' => true
+            'primeiro_acesso' => true
         ]);
     }
 }

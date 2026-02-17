@@ -126,7 +126,7 @@ class Usuarios extends Authenticatable
             'nome' => $this->nome,
             'cpf' => $this->cpf,
             'role' => $this->role ?? null,
-            'first_access' => $this->first_access,
+            'primeiro_acesso' => $this->primeiro_acesso,
         ];
     }
 
