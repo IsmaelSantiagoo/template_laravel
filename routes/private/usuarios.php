@@ -9,3 +9,4 @@ Route::get('/menus-favoritos', [UsuariosController::class, 'getMenusFavoritos'])
 Route::post('/favoritar-menu/{menu}', [UsuariosController::class, 'favoritarMenu']);
 
 Route::get('', [UsuariosController::class, 'index']);
+Route::patch('/{id}', [UsuariosController::class, 'update']);

@@ -31,6 +31,56 @@ class UsuariosController extends Controller
         }
     }
 
+    // função para atualizar os dados do usuário
+    public function update(Request $request, $id)
+    {
+        // configurar regras de validação
+        $rules = [
+            'nome' => ['required'],
+            'cpf' => ['nullable'],
+        ];
+
+        // validação dos dados recebidos
+        $validator = Validator::make($request->all(), $rules, [
+            'nome.required' => 'O nome é obrigatório.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+
+        // lógica para atualizar os dados do usuário com o ID fornecido
+        try {
+            // encontrar usuário pelo ID
+            $usuario = Usuario::find($id);
+
+            if (!$usuario) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuário não encontrado.'
+                ]);
+            }
+
+            // atualizar dados do usuário
+            $usuario->nome = $request->nome;
+            $usuario->cpf = $request->cpf;
+            $usuario->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Dados do usuário atualizados com sucesso.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar os dados do usuário: ' . $e->getMessage()
+            ]);
+        }
+    }
+
     // função para alterar a senha do usuário
     public function alterarSenha(Request $request, $id)
     {
