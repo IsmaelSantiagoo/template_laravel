@@ -126,6 +126,31 @@ class UsuariosController extends Controller
         }
     }
 
+    // Deletar um usuario
+    public function destroy($id)
+    {
+        $usuario = Usuario::find($id);
+        try {
+            if (!$usuario) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuário não encontrado para exclusão.',
+                ], 404);
+            }
+            $usuario->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Usuário deletado com sucesso.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao deletar usuário.',
+                'data' => $e->getMessage()
+            ], 400);
+        }
+    }
+
     // função para alterar a senha do usuário
     public function alterarSenha(Request $request, $id)
     {

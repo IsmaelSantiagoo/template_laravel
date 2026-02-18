@@ -11,3 +11,4 @@ Route::post('/favoritar-menu/{menu}', [UsuariosController::class, 'favoritarMenu
 Route::get('', [UsuariosController::class, 'index']);
 Route::get('/{cpf}', [UsuariosController::class, 'show']);
 Route::patch('/{id}', [UsuariosController::class, 'update']);
+Route::delete('/{id}', [UsuariosController::class, 'destroy']);
