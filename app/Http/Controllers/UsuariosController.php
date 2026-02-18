@@ -108,7 +108,7 @@ class UsuariosController extends Controller
             }
             // dados do usuário formatados
             $usuarioArray = $usuario->toArray();
-            $usuarioArray['usuario_responsavel'] = $usuario->usuario_responsavel;
+            $usuarioArray['usuario_responsavel_id'] = $usuario->usuario_responsavel_id;
             return response()->json([
                 'success' => true,
                 'message' => 'Usuário encontrado com sucesso.',
@@ -123,7 +123,7 @@ class UsuariosController extends Controller
         }
     }
 
-    // Deletar um usuario
+    // Deletar um usuário
     public function destroy($id)
     {
         $usuario = Usuario::find($id);

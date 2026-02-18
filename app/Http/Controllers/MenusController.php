@@ -35,7 +35,7 @@ class MenusController extends Controller
             'rota' => 'nullable|string',
             'ordem' => 'nullable|integer',
             'menu_pai_id' => 'nullable|integer|exists:menus,id',
-            'usuario_responsavel' => 'required|integer|exists:usuarios,id',
+            'usuario_responsavel_id' => 'required|integer|exists:usuarios,id',
         ]);
 
         // validação de cadastro completo
@@ -54,7 +54,7 @@ class MenusController extends Controller
                 'rota' => $request->rota,
                 'ordem' => $request->ordem,
                 'menu_pai_id' => $request->menu_pai_id,
-                'usuario_responsavel' => $request->usuario_responsavel,
+                'usuario_responsavel_id' => $request->usuario_responsavel_id,
             ]);
             return response()->json([
                 'success' => true,
@@ -82,7 +82,7 @@ class MenusController extends Controller
             }
             // dados do menu formatados
             $menuArray = $menu->toArray();
-            $menuArray['usuario_responsavel'] = $menu->usuario_responsavel;
+            $menuArray['usuario_responsavel_id'] = $menu->usuario_responsavel_id;
             return response()->json([
                 'success' => true,
                 'message' => 'Menu encontrado com sucesso.',
@@ -106,7 +106,7 @@ class MenusController extends Controller
             'rota' => 'nullable|string',
             'ordem' => 'nullable|integer',
             'menu_pai_id' => 'nullable|integer|exists:menus,id',
-            'usuario_responsavel' => 'required|integer|exists:usuarios,id',
+            'usuario_responsavel_id' => 'required|integer|exists:usuarios,id',
         ]);
 
         $menu = Menu::find($id);
@@ -123,7 +123,7 @@ class MenusController extends Controller
                 'rota' => $request->rota,
                 'ordem' => $request->ordem,
                 'menu_pai_id' => $request->menu_pai_id,
-                'usuario_responsavel' => $request->usuario_responsavel,
+                'usuario_responsavel_id' => $request->usuario_responsavel_id,
             ]);
             return response()->json([
                 'success' => true,
