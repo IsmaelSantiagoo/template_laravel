@@ -27,6 +27,14 @@ class MotoristasController extends Controller
             $query->where('status', $request->input('status'));
         }
 
+        if ($request->filled('filial')) {
+            $query->where('filial_id', $request->input('filial'));
+        }
+
+        if ($request->filled('cluster')) {
+            $query->where('cluster_id', $request->input('cluster'));
+        }
+
         $motoristas = $query->with(['filial', 'cluster'])
             ->get()->makeHidden(['filial_id', 'cluster_id']);
 
@@ -49,8 +57,14 @@ class MotoristasController extends Controller
     {
         // configurar regras de validação
         $rules = [
+            'codigo' => ['nullable'],
             'nome' => ['required'],
             'cpf' => ['nullable'],
+            'status' => ['nullable', 'in:ativo,inativo'],
+            'celular_corporativo' => ['nullable'],
+            'data_admissao' => ['nullable', 'date'],
+            'filial_id' => ['nullable', 'exists:filiais,id'],
+            'cluster_id' => ['nullable', 'exists:clusters,id'],
         ];
 
         // validação dos dados recebidos
@@ -78,9 +92,16 @@ class MotoristasController extends Controller
             }
 
             // atualizar dados do motorista
-            $motorista->nome = $request->nome;
-            $motorista->cpf = $request->cpf;
-            $motorista->save();
+            $motorista->update([
+                'codigo' => $request->input('codigo'),
+                'nome' => $request->input('nome'),
+                'cpf' => $request->input('cpf'),
+                'status' => $request->input('status'),
+                'celular_corporativo' => $request->input('celular_corporativo'),
+                'data_admissao' => $request->input('data_admissao'),
+                'filial_id' => $request->input('filial_id'),
+                'cluster_id' => $request->input('cluster_id'),
+            ]);
 
             return response()->json([
                 'success' => true,
