@@ -19,6 +19,7 @@ return new class extends Migration
       $table->foreignUuid('filial_id')->nullable()->constrained('filiais')->nullOnDelete();
       $table->foreignUuid('cluster_id')->nullable()->constrained('clusters')->nullOnDelete();
       $table->string('senha')->nullable();
+      $table->string('mapa')->nullable();
       $table->foreignUuid('usuario_responsavel_id')->constrained('usuarios')->cascadeOnDelete();
       $table->timestamps();
     });

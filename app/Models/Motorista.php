@@ -25,6 +25,7 @@ class Motorista extends Model
         'filial_id',
         'cluster_id',
         'senha',
+        'mapa',
         'usuario_responsavel_id',
     ];
 

@@ -233,4 +233,51 @@ class MotoristasController extends Controller
             ], 400);
         }
     }
+
+    // Atualizar o mapa do motorista
+    public function updateRoute(Request $request, $id)
+    {
+        try {
+            // configurar regras de validação
+            $rules = [
+                'mapa' => ['required'],
+            ];
+
+            // validação dos dados recebidos
+            $validator = Validator::make($request->all(), $rules, [
+                'mapa.required' => 'O mapa é obrigatório.',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()
+                ]);
+            }
+
+            $motorista = Motorista::find($id);
+
+            if (!$motorista) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Motorista não encontrado.'
+                ], 404);
+            }
+
+            // Lógica para atualizar o mapa do motorista
+            $motorista->mapa = $request->input('mapa');
+            $motorista->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Mapa do motorista atualizado com sucesso.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar o mapa do motorista.',
+                'data' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
