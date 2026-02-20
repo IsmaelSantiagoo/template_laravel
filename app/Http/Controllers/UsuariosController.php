@@ -19,12 +19,12 @@ class UsuariosController extends Controller
         // consultar dados dos usuários e filtrar por nome, cpf ou role se os parâmetros forem fornecidos
         $query = Usuario::query();
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $query->where('nome', 'like', '%' . $request->input('search') . '%')
                 ->orWhere('cpf', 'like', '%' . $request->input('search') . '%');
         }
 
-        if ($request->has('role')) {
+        if ($request->filled('role')) {
             $query->where('role', $request->input('role'));
         }
 
