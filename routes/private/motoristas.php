@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MotoristasController;
 
+Route::post('', [MotoristasController::class, 'store']);
 Route::get('', [MotoristasController::class, 'index']);
 Route::get('/{id}', [MotoristasController::class, 'show']);
 Route::patch('/{id}', [MotoristasController::class, 'update']);

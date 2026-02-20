@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Motorista;
+use App\Models\Usuario;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -49,6 +50,72 @@ class MotoristasController extends Controller
                 'success' => false,
                 'message' => 'Erro ao consultar motoristas.'
             ], 500);
+        }
+    }
+
+    // função para criar um novo motorista
+    public function store(Request $request)
+    {
+
+        $user = $request->user();
+
+        // configurar regras de validação
+        $rules = [
+            'codigo' => ['nullable'],
+            'nome' => ['required'],
+            'cpf' => ['required', 'unique:motoristas,cpf'],
+            'status' => ['nullable', 'in:ativo,inativo'],
+            'celular_corporativo' => ['nullable'],
+            'data_admissao' => ['nullable', 'date'],
+            'filial_id' => ['nullable', 'exists:filiais,id'],
+            'cluster_id' => ['nullable', 'exists:clusters,id'],
+        ];
+
+        // validação dos dados recebidos
+        $validator = Validator::make($request->all(), $rules, [
+            'nome.required' => 'O nome é obrigatório.',
+            'cpf.required' => 'O CPF é obrigatório.',
+            'cpf.unique' => 'O CPF já está cadastrado.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+
+        // lógica para criar um novo motorista
+        try {
+            Motorista::create([
+                'codigo' => $request->input('codigo'),
+                'nome' => $request->input('nome'),
+                'cpf' => $request->input('cpf'),
+                'status' => $request->input('status'),
+                'celular_corporativo' => $request->input('celular_corporativo'),
+                'data_admissao' => $request->input('data_admissao'),
+                'filial_id' => $request->input('filial_id'),
+                'cluster_id' => $request->input('cluster_id'),
+                'usuario_responsavel_id' => $user->id,
+            ]);
+
+            Usuario::create([
+                'nome' => $request->input('nome'),
+                'cpf' => $request->input('cpf'),
+                'senha' => $request->input('cpf'),
+                'role' => 'motorista',
+                'primeiro_acesso' => true,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Motorista criado com sucesso.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao criar motorista: ' . $e->getMessage()
+            ]);
         }
     }
 
