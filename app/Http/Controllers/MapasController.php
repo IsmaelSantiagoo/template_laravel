@@ -14,14 +14,20 @@ class MapasController extends Controller
             // 1. Inicia a query de motoristas
             $motoristasQuery = Motorista::with(['filial:id,descricao', 'cluster:id,descricao']);
 
-            // 2. Aplica o filtro de filial no motorista, se enviado
+            // 2. Filtro por Filial (se enviado)
             if ($request->filled('filial') && $request->input('filial') !== 'todos') {
                 $motoristasQuery->where('filial_id', $request->input('filial'));
             }
 
+            // 3. NOVO: Filtro de Busca por Código do Mapa (campo 'search')
+            if ($request->filled('search')) {
+                $searchTerm = $request->input('search');
+                $motoristasQuery->where('mapa', 'LIKE', "%{$searchTerm}%");
+            }
+
             $motoristas = $motoristasQuery->get(['id', 'codigo', 'nome', 'cluster_id', 'filial_id', 'mapa']);
 
-            // 3. Se não houver motoristas para a filial filtrada, retorna array vazio imediatamente
+            // 4. Se não houver motoristas que atendam aos filtros, retorna array vazio
             if ($motoristas->isEmpty()) {
                 return response()->json([
                     'success' => true,
@@ -30,20 +36,18 @@ class MapasController extends Controller
                 ]);
             }
 
-            // 4. Pega a lista de IDs de mapas dos motoristas encontrados
+            // 5. Pega a lista de IDs de mapas únicos resultantes dos filtros
             $mapasValidos = $motoristas->pluck('mapa')->unique();
 
-            // 5. Busca as notas fiscais apenas dos mapas que pertencem aos motoristas filtrados
+            // 6. Busca as notas fiscais apenas dos mapas filtrados
             $mapas = NotaFiscal::with(['cliente', 'produtos'])
                 ->whereIn('mapa', $mapasValidos)
                 ->get()
                 ->groupBy('mapa')
                 ->map(function ($notasNoMapa, $mapaId) use ($motoristas) {
 
-                    // Busca o motorista correspondente a este mapa (já filtrado anteriormente)
                     $motoristaRaw = $motoristas->where('mapa', $mapaId)->first();
 
-                    // Agrupar as notas por CLIENTE
                     $clientesNoMapa = $notasNoMapa->groupBy('cliente_id')->map(function ($notasDoCliente) {
                         $cliente = $notasDoCliente->first()->cliente;
 
