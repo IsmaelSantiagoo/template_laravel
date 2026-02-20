@@ -59,7 +59,6 @@ class MotoristasController extends Controller
         $rules = [
             'codigo' => ['nullable'],
             'nome' => ['required'],
-            'cpf' => ['nullable'],
             'status' => ['nullable', 'in:ativo,inativo'],
             'celular_corporativo' => ['nullable'],
             'data_admissao' => ['nullable', 'date'],
@@ -95,7 +94,6 @@ class MotoristasController extends Controller
             $motorista->update([
                 'codigo' => $request->input('codigo'),
                 'nome' => $request->input('nome'),
-                'cpf' => $request->input('cpf'),
                 'status' => $request->input('status'),
                 'celular_corporativo' => $request->input('celular_corporativo'),
                 'data_admissao' => $request->input('data_admissao'),

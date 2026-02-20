@@ -50,7 +50,6 @@ class UsuariosController extends Controller
         // configurar regras de validação
         $rules = [
             'nome' => ['required'],
-            'cpf' => ['nullable'],
         ];
 
         // validação dos dados recebidos
@@ -79,7 +78,6 @@ class UsuariosController extends Controller
 
             // atualizar dados do usuário
             $usuario->nome = $request->nome;
-            $usuario->cpf = $request->cpf;
             $usuario->save();
 
             return response()->json([
