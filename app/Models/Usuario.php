@@ -89,7 +89,7 @@ class Usuario extends Authenticatable
 
     public function setNomeAttribute($value)
     {
-        $this->attributes['nome'] = mb_strtolower($value);
+        $this->attributes['nome'] = mb_strtoupper($value);
     }
 
     public function setSenhaAttribute($value)

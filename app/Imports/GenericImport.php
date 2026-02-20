@@ -15,6 +15,7 @@ use App\Models\Produto;
 use App\Models\ProdutoNotaFiscal;
 use App\Models\TipoMarca;
 use App\Models\TipoPessoa;
+use App\Models\Usuario;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
@@ -198,6 +199,18 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
         }
 
         Motorista::updateOrCreate(['codigo' => $codigo], $payload);
+
+        // Cria um usuário para o motorista
+        Usuario::updateOrCreate(
+            ['cpf' => Arr::get($data, 'cpf')],
+            [
+                'nome' => $nome,
+                'senha' => isset($payload['senha']) ? $payload['senha'] : Hash::make($payload['cpf']),
+                'role' => 'motorista',
+                'primeiro_acesso' => true,
+                'usuario_responsavel_id' => $this->userId,
+            ]
+        );
     }
 
     // ─── Notas Fiscais ──────────────────────────────────────────────────
