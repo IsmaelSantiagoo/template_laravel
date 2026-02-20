@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password as RulesPassword;
 
@@ -152,21 +151,16 @@ class UsuariosController extends Controller
 
         // configurar regras de validação
         $rules = [
-            'senha_antiga' => ['required'],
-            'senha_nova' => ['required', 'confirmed:confirmar_senha_nova', RulesPassword::default()],
-            'confirmar_senha_nova' => ['required'],
+            'senha' => ['required', 'confirmed:confirmar_senha', RulesPassword::default()],
+            'confirmar_senha' => ['required'],
         ];
 
         // validação dos dados recebidos
         $validator = Validator::make($request->all(), $rules, [
-            'senha_antiga.required' => 'A senha antiga é obrigatória.',
-            'senha_antiga.password.mixed' => 'A senha deve conter letras maiúsculas, minúsculas, números e símbolos.',
-
-            'senha_nova.min' => 'A senha deve ter no mínimo :min caracteres.',
-            'senha_nova.password.mixed' => 'A senha deve conter letras maiúsculas, minúsculas, números e símbolos.',
-            'senha_nova.confirmed' => 'As senhas não coincidem.',
-
-            'confirmar_senha_nova.required' => 'A confirmação da senha é obrigatória.',
+            'senha.required' => 'A senha é obrigatória.',
+            'senha.password.mixed' => 'A senha deve conter letras maiúsculas, minúsculas, números e símbolos.',
+            'senha.confirmed' => 'As senhas não coincidem.',
+            'confirmar_senha.required' => 'A confirmação da senha é obrigatória.',
         ]);
 
         if ($validator->fails()) {
@@ -188,26 +182,15 @@ class UsuariosController extends Controller
                 ]);
             }
 
-            // validar se a senha antiga está correta
-            if (!Hash::check($request->senha_antiga, $usuario->senha)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'A senha antiga está incorreta.'
-                ]);
-            }
-
-            // alterar primeiro_acesso para false se for true
-            if ($usuario->primeiro_acesso) {
-                $usuario->primeiro_acesso = false;
-            }
-
             // atualizar senha do usuário
-            $usuario->senha = $request->senha_nova;
+            $usuario->senha = $request->senha;
             $usuario->save();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Senha alterada com sucesso.'
+                'message' => $request->user()->id === $usuario->id
+                    ? 'Sua senha foi alterada com sucesso, faça login novamente.'
+                    : 'Senha alterada com sucesso.'
             ]);
         } catch (\Exception $e) {
             return response()->json([

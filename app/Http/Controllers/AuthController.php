@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Illuminate\Validation\Rules\Password as RulesPassword;
 
 class AuthController extends Controller
 {
@@ -191,5 +192,76 @@ class AuthController extends Controller
             'success' => true,
             'message' => 'Logout realizado com sucesso.',
         ]);
+    }
+
+    // função para redefinir a senha do usuário
+    public function resetPassword(Request $request, $id)
+    {
+
+        // configurar regras de validação
+        $rules = [
+            'senha_antiga' => ['required'],
+            'senha_nova' => ['required', 'confirmed:confirmar_senha_nova', RulesPassword::default()],
+            'confirmar_senha_nova' => ['required'],
+        ];
+
+        // validação dos dados recebidos
+        $validator = Validator::make($request->all(), $rules, [
+            'senha_antiga.required' => 'A senha antiga é obrigatória.',
+            'senha_antiga.password.mixed' => 'A senha deve conter letras maiúsculas, minúsculas, números e símbolos.',
+
+            'senha_nova.min' => 'A senha deve ter no mínimo :min caracteres.',
+            'senha_nova.password.mixed' => 'A senha deve conter letras maiúsculas, minúsculas, números e símbolos.',
+            'senha_nova.confirmed' => 'As senhas não coincidem.',
+
+            'confirmar_senha_nova.required' => 'A confirmação da senha é obrigatória.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ]);
+        }
+
+        // lógica para alterar a senha do usuário com o ID fornecido
+        try {
+            // encontrar usuário pelo ID
+            $usuario = Usuario::find($id);
+
+            if (!$usuario) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Usuário não encontrado.'
+                ]);
+            }
+
+            // validar se a senha antiga está correta
+            if (!Hash::check($request->senha_antiga, $usuario->senha)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'A senha antiga está incorreta.'
+                ]);
+            }
+
+            // alterar primeiro_acesso para false se for true
+            if ($usuario->primeiro_acesso) {
+                $usuario->primeiro_acesso = false;
+            }
+
+            // atualizar senha do usuário
+            $usuario->senha = $request->senha_nova;
+            $usuario->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Senha alterada com sucesso.'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao alterar a senha: ' . $e->getMessage()
+            ]);
+        }
     }
 }
