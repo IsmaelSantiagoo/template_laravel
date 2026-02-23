@@ -231,6 +231,10 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
                 // consultar o motorista para associar ao mapa
                 $motoristaId = $this->resolveFk(Motorista::class, 'codigo', Arr::get($data, 'motorista_codigo'));
 
+                if (!$motoristaId) {
+                    throw new \RuntimeException("Motorista with codigo '{$data['motorista_codigo']}' not found for mapa association");
+                }
+
                 // cadastrar mapa
                 Mapa::updateOrCreate(
                     ['codigo' => $mapaCodigo],
@@ -278,6 +282,7 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
             ['numero' => $numero],
             [
                 'pedido' => Arr::get($data, 'pedido'),
+                'mapa' =>  Arr::get($data, 'mapa'),
                 'cliente_id' => $clienteId,
                 'data_operacao' => $this->toDate(Arr::get($data, 'data_operacao')),
                 'data_emissao' => $this->toDate(Arr::get($data, 'data_emissao')),
