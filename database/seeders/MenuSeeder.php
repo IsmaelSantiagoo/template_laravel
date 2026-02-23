@@ -13,7 +13,7 @@ class MenuSeeder extends Seeder
     public function run(): void
     {
         // Step 1: Insert parent menus
-        $avarias = Menu::create([
+        Menu::create([
             'titulo' => 'Avarias',
             'icone' => 'TriangleAlert',
             'rota' => '/admin/avarias',
@@ -22,7 +22,7 @@ class MenuSeeder extends Seeder
             'usuario_responsavel_id' => 1,
         ]);
 
-        $importacoes = Menu::create([
+        Menu::create([
             'titulo' => 'Importações',
             'icone' => 'Upload',
             'rota' => '/admin/importacoes',
