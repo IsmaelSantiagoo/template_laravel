@@ -33,4 +33,15 @@ class Mapa extends Model
     {
         return $this->belongsTo(Motorista::class, 'motorista_id');
     }
+
+    public function clientes()
+    {
+        return $this->hasMany(ClientesMapa::class, 'mapa_id');
+    }
+
+    public function notas_fiscais()
+    {
+        // aqui usamos o código do mapa para criar o relacionamento, já que as notas fiscais estão associadas ao código do mapa e não ao ID
+        return $this->hasMany(NotaFiscal::class, 'mapa', 'codigo');
+    }
 }
