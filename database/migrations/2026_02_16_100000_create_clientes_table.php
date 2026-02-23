@@ -25,8 +25,6 @@ return new class extends Migration
             $table->foreignUuid('categoria_id')->nullable()->constrained('categorias')->nullOnDelete();
             $table->foreignUuid('tipo_pessoa_id')->nullable()->constrained('tipos_pessoa')->nullOnDelete();
             $table->boolean('pdv_ativo')->default(true);
-            $table->string('telefone')->nullable();
-            $table->boolean('telefone_principal')->default(false);
             $table->foreignUuid('usuario_responsavel_id')->constrained('usuarios')->cascadeOnDelete();
             $table->timestamps();
         });

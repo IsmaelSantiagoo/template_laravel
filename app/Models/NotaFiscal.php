@@ -18,9 +18,8 @@ class NotaFiscal extends Model
     protected $fillable = [
         'numero',
         'pedido',
-        'mapa',
         'cliente_id',
-        'rota_nome',
+        'mapa',
         'data_operacao',
         'data_emissao',
         'valor_bruto',

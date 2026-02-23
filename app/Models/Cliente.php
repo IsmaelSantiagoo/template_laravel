@@ -31,8 +31,6 @@ class Cliente extends Model
         'categoria_id',
         'tipo_pessoa_id',
         'pdv_ativo',
-        'telefone',
-        'telefone_principal',
         'usuario_responsavel_id',
     ];
 
@@ -40,7 +38,6 @@ class Cliente extends Model
         'latitude' => 'decimal:7',
         'longitude' => 'decimal:7',
         'pdv_ativo' => 'boolean',
-        'telefone_principal' => 'boolean',
     ];
 
     public function categoria()

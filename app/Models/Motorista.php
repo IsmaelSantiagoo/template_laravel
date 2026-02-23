@@ -24,17 +24,11 @@ class Motorista extends Model
         'data_admissao',
         'filial_id',
         'cluster_id',
-        'senha',
-        'mapa',
         'usuario_responsavel_id',
     ];
 
     protected $casts = [
         'data_admissao' => 'date',
-    ];
-
-    protected $hidden = [
-        'senha',
     ];
 
     public function filial()

@@ -5,10 +5,12 @@ namespace App\Imports;
 use App\Events\ImportProgressUpdated;
 use App\Models\Categoria;
 use App\Models\Cliente;
+use App\Models\ClientesMapa;
 use App\Models\Cluster;
 use App\Models\Embalagem;
 use App\Models\Filial;
 use App\Models\ImportBatch;
+use App\Models\Mapa;
 use App\Models\Motorista;
 use App\Models\NotaFiscal;
 use App\Models\Produto;
@@ -133,8 +135,6 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
                 'categoria_id' => $categoriaId,
                 'tipo_pessoa_id' => $tipoPessoaId,
                 'pdv_ativo' => $this->toBool(Arr::get($data, 'pdv_ativo'), true),
-                'telefone' => Arr::get($data, 'telefone'),
-                'telefone_principal' => $this->toBool(Arr::get($data, 'telefone_principal'), false),
                 'usuario_responsavel_id' => $this->userId,
             ]
         );
@@ -145,10 +145,10 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
     private function importProduto(array $data): void
     {
         $codigo = Arr::get($data, 'codigo');
-        $nome = Arr::get($data, 'nome');
+        $descricao = Arr::get($data, 'descricao');
 
-        if (blank($codigo) || blank($nome)) {
-            throw new \RuntimeException('Missing codigo or nome');
+        if (blank($codigo) || blank($descricao)) {
+            throw new \RuntimeException('Missing codigo or descricao');
         }
 
         $tipoMarcaId = $this->resolveFk(TipoMarca::class, 'codigo', Arr::get($data, 'tipo_marca_codigo'));
@@ -157,9 +157,8 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
         Produto::updateOrCreate(
             ['codigo' => $codigo],
             [
-                'nome' => $nome,
-                'descricao' => Arr::get($data, 'descricao'),
-                'quantidade' => $this->toInt(Arr::get($data, 'quantidade')),
+                'descricao' => $descricao,
+                'valor_unitario' => $this->toDecimal(Arr::get($data, 'valor_unitario')),
                 'tipo_marca_id' => $tipoMarcaId,
                 'embalagem_id' => $embalagemId,
                 'ean' => Arr::get($data, 'ean'),
@@ -183,6 +182,7 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
         $clusterId = $this->resolveFk(Cluster::class, 'codigo', Arr::get($data, 'cluster_codigo'));
 
         $payload = [
+            'codigo' => $codigo,
             'nome' => $nome,
             'cpf' => Arr::get($data, 'cpf'),
             'status' => Arr::get($data, 'status', 'ativo') ?: 'ativo',
@@ -193,11 +193,6 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
             'usuario_responsavel_id' => $this->userId,
         ];
 
-        $senha = Arr::get($data, 'senha');
-        if (!blank($senha)) {
-            $payload['senha'] = Hash::make($senha);
-        }
-
         Motorista::updateOrCreate(['codigo' => $codigo], $payload);
 
         // Cria um usuário para o motorista
@@ -205,7 +200,7 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
             ['cpf' => Arr::get($data, 'cpf')],
             [
                 'nome' => $nome,
-                'senha' => isset($payload['senha']) ? $payload['senha'] : Hash::make($payload['cpf']),
+                'senha' => Hash::make($payload['cpf']),
                 'role' => 'motorista',
                 'primeiro_acesso' => true,
                 'usuario_responsavel_id' => $this->userId,
@@ -225,13 +220,65 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
 
         $clienteId = $this->resolveFk(Cliente::class, 'codigo', Arr::get($data, 'cliente_codigo'));
 
+        // verificar se o mapa já foi cadastrado
+        Mapa::query()->where('codigo', Arr::get($data, 'mapa'))->firstOr(function () use ($data) {
+            $mapaCodigo = Arr::get($data, 'mapa');
+
+            if (blank($mapaCodigo)) {
+                throw new \RuntimeException('Missing mapa');
+            } else {
+
+                // consultar o motorista para associar ao mapa
+                $motoristaId = $this->resolveFk(Motorista::class, 'codigo', Arr::get($data, 'motorista_codigo'));
+
+                // cadastrar mapa
+                Mapa::updateOrCreate(
+                    ['codigo' => $mapaCodigo],
+                    [
+                        'status' => 'ativo',
+                        'motorista_id' => $motoristaId,
+                        'usuario_responsavel_id' => $this->userId,
+                    ]
+                );
+
+                // consultar o cliente atual e vinculá-lo ao mapa
+                $clienteCodigo = Arr::get($data, 'cliente_codigo');
+                if (blank($clienteCodigo)) {
+                    throw new \RuntimeException('Missing cliente_codigo for mapa association');
+                } else {
+                    $clienteId = $this->resolveFk(Cliente::class, 'codigo', $clienteCodigo);
+                    if (!$clienteId) {
+                        throw new \RuntimeException("Cliente with codigo '{$clienteCodigo}' not found for mapa association");
+                    }
+
+                    $mapa = Mapa::query()->where('codigo', $mapaCodigo)->first();
+                    if (!$mapa) {
+                        throw new \RuntimeException("Mapa with codigo '{$mapaCodigo}' not found after creation");
+                    }
+
+                    $clienteVinculado = ClientesMapa::query()
+                        ->where('cliente_id', $clienteId)
+                        ->where('mapa_id', $mapa->id)
+                        ->first();
+
+                    if (!$clienteVinculado) {
+                        ClientesMapa::create([
+                            'cliente_id' => $clienteId,
+                            'mapa_id' => $mapa->id,
+                            'usuario_responsavel_id' => $this->userId,
+                        ]);
+                    } else {
+                        throw new \RuntimeException("Cliente with codigo '{$clienteCodigo}' is already linked to Mapa '{$mapaCodigo}'");
+                    }
+                }
+            }
+        });
+
         NotaFiscal::updateOrCreate(
             ['numero' => $numero],
             [
                 'pedido' => Arr::get($data, 'pedido'),
-                'mapa' => Arr::get($data, 'mapa'),
                 'cliente_id' => $clienteId,
-                'rota_nome' => Arr::get($data, 'rota_nome'),
                 'data_operacao' => $this->toDate(Arr::get($data, 'data_operacao')),
                 'data_emissao' => $this->toDate(Arr::get($data, 'data_emissao')),
                 'valor_bruto' => $this->toDecimal(Arr::get($data, 'valor_bruto')) ?? 0,
@@ -282,7 +329,6 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
     {
         return (string) (
             Arr::get($data, 'codigo')
-            ?? Arr::get($data, 'numero')
             ?? Arr::get($data, 'nf_numero')
             ?? 'row'
         );

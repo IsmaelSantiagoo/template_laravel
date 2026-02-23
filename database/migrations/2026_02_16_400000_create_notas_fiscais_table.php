@@ -14,7 +14,6 @@ return new class extends Migration
       $table->string('pedido')->nullable();
       $table->string('mapa')->nullable();
       $table->foreignUuid('cliente_id')->nullable()->constrained('clientes')->nullOnDelete();
-      $table->string('rota_nome')->nullable();
       $table->date('data_operacao')->nullable();
       $table->date('data_emissao')->nullable();
       $table->decimal('valor_bruto', 12, 2)->default(0);

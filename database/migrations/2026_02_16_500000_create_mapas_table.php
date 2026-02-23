@@ -8,15 +8,11 @@ return new class extends Migration
 {
   public function up(): void
   {
-    Schema::create('produtos', function (Blueprint $table) {
+    Schema::create('mapas', function (Blueprint $table) {
       $table->uuid('id')->primary();
       $table->string('codigo')->unique();
-      $table->string('nome');
-      $table->string('descricao')->nullable();
-      $table->integer('quantidade')->nullable();
-      $table->foreignUuid('tipo_marca_id')->nullable()->constrained('tipos_marca')->nullOnDelete();
-      $table->foreignUuid('embalagem_id')->nullable()->constrained('embalagens')->nullOnDelete();
-      $table->string('ean')->nullable();
+      $table->string('status')->default('ativo');
+      $table->foreignUuid('motorista_id')->nullable()->constrained('motoristas')->nullOnDelete();
       $table->foreignUuid('usuario_responsavel_id')->constrained('usuarios')->cascadeOnDelete();
       $table->timestamps();
     });
@@ -24,6 +20,6 @@ return new class extends Migration
 
   public function down(): void
   {
-    Schema::dropIfExists('produtos');
+    Schema::dropIfExists('mapas');
   }
 };
