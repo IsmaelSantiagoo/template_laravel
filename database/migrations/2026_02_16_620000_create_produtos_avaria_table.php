@@ -12,7 +12,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('avaria_id')->nullable()->constrained('avarias')->nullOnDelete();
             $table->foreignUuid('produto_id')->nullable()->constrained('produtos')->nullOnDelete();
-            $table->enum('tipo_avaria', ['avariado', 'faltante', 'inversao'])->nullable();
+            $table->foreignUuid('tipo_avaria_id')->nullable()->constrained('tipos_avaria')->nullOnDelete();
             $table->integer('quantidade')->nullable();
             $table->foreignUuid('usuario_responsavel_id')->constrained('usuarios')->cascadeOnDelete();
             $table->timestamps();

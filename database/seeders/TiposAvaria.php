@@ -21,7 +21,7 @@ class TiposAvaria extends Seeder
         foreach ($tiposAvaria as $descricao) {
             TipoAvaria::create([
                 'descricao' => $descricao,
-                'usuario_responsavel_id' => '019c8ba5-db8b-704f-879d-2b4765c3ce9c'
+                'usuario_responsavel_id' => '019c9022-246f-70d2-9c7e-51a46b3cd99a'
             ]);
         }
     }

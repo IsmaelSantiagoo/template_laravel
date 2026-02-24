@@ -20,7 +20,7 @@ class ProdutosAvaria extends Model
     protected $fillable = [
         'avaria_id',
         'produto_id',
-        'tipo_avaria',
+        'tipo_avaria_id',
         'quantidade',
         'usuario_responsavel_id',
     ];
@@ -38,5 +38,10 @@ class ProdutosAvaria extends Model
     public function produto()
     {
         return $this->belongsTo(Produto::class, 'produto_id');
+    }
+
+    public function tipoAvaria()
+    {
+        return $this->belongsTo(TipoAvaria::class, 'tipo_avaria_id');
     }
 }

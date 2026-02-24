@@ -13,7 +13,6 @@ return new class extends Migration
             $table->foreignUuid('cliente_id')->nullable()->constrained('clientes')->nullOnDelete();
             $table->foreignUuid('mapa_id')->nullable()->constrained('mapas')->nullOnDelete();
             $table->enum('status', ['pendente', 'em_analise', 'concluido'])->default('pendente');
-            $table->date('data_ocorrencia')->nullable();
             $table->foreignUuid('usuario_responsavel_id')->constrained('usuarios')->cascadeOnDelete();
             $table->timestamps();
         });

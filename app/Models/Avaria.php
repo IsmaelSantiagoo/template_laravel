@@ -36,13 +36,23 @@ class Avaria extends Model
         return $this->belongsTo(Cliente::class, 'cliente_id');
     }
 
-    public function motorista()
-    {
-        return $this->belongsTo(Motorista::class, 'motorista_id');
-    }
-
     public function mapa()
     {
         return $this->belongsTo(Mapa::class, 'mapa_id');
+    }
+
+    public function notasFiscais()
+    {
+        return $this->hasMany(NotasFiscaisAvaria::class, 'avaria_id');
+    }
+
+    public function produtos()
+    {
+        return $this->hasMany(ProdutosAvaria::class, 'avaria_id');
+    }
+
+    public function anexos()
+    {
+        return $this->hasMany(AnexosAvaria::class, 'avaria_id');
     }
 }
