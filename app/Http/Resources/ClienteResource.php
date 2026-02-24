@@ -35,6 +35,17 @@ class ClienteResource extends JsonResource
             'pdv_ativo' => $this->pdv_ativo,
             'contatos' => $this->contatos,
 
+            // retorna quantidade de notas fiscais se houver
+            'qntd_notas_fiscais' => $this->whenLoaded('notasFiscais', function () {
+                return $this->notasFiscais->count();
+            }),
+            // retorna quantidade de produtos associados às notas fiscais se houver
+            'qntd_produtos' => $this->whenLoaded('notasFiscais', function () {
+                return $this->notasFiscais->sum(function ($nota) {
+                    return $nota->produtos->count();
+                });
+            }),
+
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

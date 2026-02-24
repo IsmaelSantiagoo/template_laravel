@@ -44,9 +44,7 @@ class NotaFiscal extends Model
 
     public function produtos()
     {
-        return $this->belongsToMany(Produto::class, 'produtos_nota_fiscal', 'nota_fiscal_id', 'produto_id')
-            ->withPivot('quantidade')
-            ->withTimestamps();
+        return $this->hasMany(ProdutoNotaFiscal::class, 'nota_fiscal_id');
     }
 
     public function usuario()

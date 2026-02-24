@@ -23,6 +23,14 @@ class ClientesController extends Controller
             });
         }
 
+        // consultar quais detalhes devem ser carregados com base no parâmetro 'detalhar' (boolean) da requisição
+        if ($request->filled('detalhar')) {
+            $query->with([
+                'notasFiscais.produtos',
+                'notasFiscais.produtos.produto',
+            ]);
+        }
+
         try {
             return response()->json([
                 'success' => true,

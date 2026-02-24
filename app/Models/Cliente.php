@@ -54,4 +54,9 @@ class Cliente extends Model
     {
         return $this->belongsTo(Usuario::class, 'usuario_responsavel_id');
     }
+
+    public function notasFiscais()
+    {
+        return $this->hasMany(NotaFiscal::class, 'cliente_id');
+    }
 }
