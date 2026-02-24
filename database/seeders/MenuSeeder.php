@@ -12,6 +12,8 @@ class MenuSeeder extends Seeder
      */
     public function run(): void
     {
+        $usuario_responsavel_id = config('auth.default_sys_uuid', '4be3c49f-7fe4-45db-a3b4-e80cf45e9247');
+
         // Step 1: Insert parent menus
         Menu::create([
             'titulo' => 'Avarias',
@@ -19,7 +21,7 @@ class MenuSeeder extends Seeder
             'rota' => '/admin/avarias',
             'ordem' => 1,
             'menu_pai_id' => null,
-            'usuario_responsavel_id' => 1,
+            'usuario_responsavel_id' => $usuario_responsavel_id,
         ]);
 
         Menu::create([
@@ -28,7 +30,7 @@ class MenuSeeder extends Seeder
             'rota' => '/admin/importacoes',
             'ordem' => 2,
             'menu_pai_id' => null,
-            'usuario_responsavel_id' => 1,
+            'usuario_responsavel_id' => $usuario_responsavel_id,
         ]);
 
         $gerenciar = Menu::create([
@@ -37,7 +39,7 @@ class MenuSeeder extends Seeder
             'rota' => '#',
             'ordem' => 3,
             'menu_pai_id' => null,
-            'usuario_responsavel_id' => 1,
+            'usuario_responsavel_id' => $usuario_responsavel_id,
         ]);
 
         // Step 2: Insert child menu using parent IDs
@@ -47,7 +49,7 @@ class MenuSeeder extends Seeder
             'rota' => '/admin/gerenciar/usuarios',
             'ordem' => 1,
             'menu_pai_id' => $gerenciar->id,
-            'usuario_responsavel_id' => 1,
+            'usuario_responsavel_id' => $usuario_responsavel_id,
         ]);
 
         Menu::create([
@@ -56,7 +58,7 @@ class MenuSeeder extends Seeder
             'rota' => '/admin/gerenciar/motoristas',
             'ordem' => 2,
             'menu_pai_id' => $gerenciar->id,
-            'usuario_responsavel_id' => 1,
+            'usuario_responsavel_id' => $usuario_responsavel_id,
         ]);
 
         Menu::create([
@@ -65,7 +67,7 @@ class MenuSeeder extends Seeder
             'rota' => '/admin/gerenciar/mapas',
             'ordem' => 3,
             'menu_pai_id' => $gerenciar->id,
-            'usuario_responsavel_id' => 1,
+            'usuario_responsavel_id' => $usuario_responsavel_id,
         ]);
     }
 }

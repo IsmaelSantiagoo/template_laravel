@@ -20,7 +20,6 @@ use App\Models\TipoPessoa;
 use App\Models\Usuario;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -200,7 +199,7 @@ class GenericImport implements OnEachRow, WithChunkReading, WithHeadingRow, With
             ['cpf' => Arr::get($data, 'cpf')],
             [
                 'nome' => $nome,
-                'senha' => Hash::make($payload['cpf']),
+                'senha' => $payload['cpf'],
                 'role' => 'motorista',
                 'primeiro_acesso' => true,
                 'usuario_responsavel_id' => $this->userId,

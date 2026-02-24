@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Usuario;
+
 return [
 
     /*
@@ -66,7 +68,7 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\Usuarios::class),
+            'model' => env('AUTH_MODEL', Usuario::class),
         ],
 
         // 'users' => [
@@ -115,5 +117,7 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
-    'default_sys_pass' => env('AUTH_DEFAULT_SYS_PASSWORD'),
+    'default_sys_uuid' => env('AUTH_DEFAULT_SYS_UUID', '4be3c49f-7fe4-45db-a3b4-e80cf45e9247'),
+    'default_sys_user' => env('AUTH_DEFAULT_SYS_USER', 'Administrador'),
+    'default_sys_pass' => env('AUTH_DEFAULT_SYS_PASSWORD', 'Admin@123'),
 ];

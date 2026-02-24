@@ -12,15 +12,18 @@ class UsuariosSeeder extends Seeder
      */
     public function run(): void
     {
+        $defaultUuid = config('auth.default_sys_uuid');
+        $defaultUser = config('auth.default_sys_user');
         $defaultPassword = config('auth.default_sys_pass');
 
-        if ($defaultPassword === null) {
+        if ($defaultPassword === null || $defaultUuid === null || $defaultUser === null) {
             return;
         }
 
         Usuario::create([
-            'nome' => 'Ismael Santiago',
-            'cpf' => '16627182688',
+            'id' => $defaultUuid,
+            'nome' => $defaultUser,
+            'cpf' => '00000000000',
             'senha' => $defaultPassword,
             'role' => 'monitoramento',
             'primeiro_acesso' => true
